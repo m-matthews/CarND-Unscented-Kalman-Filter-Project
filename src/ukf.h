@@ -31,9 +31,6 @@ public:
   ///* predicted sigma points matrix
   MatrixXd Xsig_pred_;
 
-  ///* time when the state is true, in us
-  long long time_us_;
-
   ///* Process noise standard deviation longitudinal acceleration in m/s^2
   double std_a_;
 
@@ -67,6 +64,17 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
+  ///* Previous timestamp
+  long previous_timestamp_;
+
+  MatrixXd R_radar_;
+  MatrixXd R_lidar_;
+  MatrixXd H_lidar_;
+  MatrixXd I_lidar_;
+
+  ///* Output files
+  std::ofstream NIS_radar_;
+  std::ofstream NIS_lidar_;
 
   /**
    * Constructor
@@ -91,6 +99,9 @@ public:
    */
   void Prediction(double delta_t);
 
+  void SigmaPointPrediction(double delta_t);
+  void PredictMeanAndCovariance();
+
   /**
    * Updates the state and the state covariance matrix using a laser measurement
    * @param meas_package The measurement at k+1
@@ -102,6 +113,11 @@ public:
    * @param meas_package The measurement at k+1
    */
   void UpdateRadar(MeasurementPackage meas_package);
+
+  /**
+  * A helper method to normalize angles.
+  */
+  double NormalizeAngle(double angle);
 };
 
 #endif /* UKF_H */
